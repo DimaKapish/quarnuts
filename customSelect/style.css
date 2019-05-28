@@ -6,11 +6,16 @@
 }
 .selection{
     position: relative;
-    width: 15%;
+    width: 1024px;
+    display: flex;
 }
 
 .selection select{
     display: none;
+}
+
+.main-select-wrapper{
+    width: 50%;
 }
 
 .hide{

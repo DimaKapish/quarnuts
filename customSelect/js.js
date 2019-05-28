@@ -1,66 +1,77 @@
 var selection = document.getElementsByClassName("selection");
 var select;
-var selectButton;
-var optionsWrapper;
-var option;
-var arrow;
+
+var optionsWrapper,
+    optionsItem,
+    selectButton;
+
 console.log(selection);
 
-for(var i = 0; i < selection.length; i++){
-    select = document.getElementsByTagName("select")[0];
-    console.log(select);
-    
-    arrow = document.createElement("span");
-    arrow.setAttribute("class", "arrow");
-
-    selectButton = document.createElement("div");
-    selectButton.setAttribute("class", "select-button");
-    selectButton.innerHTML = select.options[select.selectedIndex].innerHTML;
-    selectButton.appendChild(arrow);
-
-    selection[i].appendChild(selectButton);
-
+function createOptionsWrapper(){
     optionsWrapper = document.createElement("div");
     optionsWrapper.setAttribute("class", "options-wrapper hide");
+    for(var i = 0; i < select[0].options.length; i++){
+        optionsItem = document.createElement("div");
+        optionsItem.setAttribute("class", "option");
+        optionsItem.innerHTML = select[0].options[i].innerHTML;
+        optionsWrapper.appendChild(optionsItem);
 
-    for(var j = 0; j < select.length; j++){
-        option = document.createElement("div");
-        option.setAttribute("class", "option");
-        option.innerHTML = select.options[j].innerHTML;
-        
-        option.addEventListener("click", function(e){
-            var selectClick = this.parentNode.parentNode.getElementsByTagName("select")[0];
-            var selectButtonClick = this.parentNode.previousSibling;
-
-            for(var i = 0; i < selectClick.length; i++){
-                if(selectClick.options[i].innerHTML == this.innerHTML){
-                    selectClick.selectedIndex = i;
-                    selectButtonClick.innerHTML = this.innerHTML;
-                    selectButton.appendChild(arrow);
+        optionsItem.addEventListener("click", function(e){
+            e.stopPropagation();
+            for(var i = 0; i < select[0].options.length; i++){
+                if(select[0].options[i].innerHTML == this.innerHTML){
+                    select[0].selectedIndex = i;
+                    selectButton.innerHTML = this.innerHTML;
                     
                     selectedOption = this.parentNode.getElementsByClassName("selected-option");
-                    for (k = 0; k < selectedOption.length; k++) {
-                        selectedOption[k].classList.remove("selected-option");
+                    for (j = 0; j < selectedOption.length; j++) {
+                        selectedOption[j].classList.remove("selected-option");
                     }
                     this.classList.add("selected-option");
                     break;
                 }
             }
-            selectButtonClick.click();
+            selectButton.click();
         });
-        
-        optionsWrapper.appendChild(option);
-
     }
 
-    selectButton.addEventListener("click", function(e){
-        // closeSelect(this);
+    return optionsWrapper;
+
+}
+
+function createSelectButton(){
+    selectButton = document.createElement("div");
+    selectButton.setAttribute("class", "select-button");
+    selectButton.innerHTML = select[0].options[select[0].selectedIndex].innerHTML;
+
+    selectButton.addEventListener("click", function(e){    
+        e.stopPropagation();
         this.nextSibling.classList.toggle("hide");
-        arrow.classList.toggle("arrow-active");
-    })
-    
-    selection[i].appendChild(optionsWrapper);
-    console.log(optionsWrapper);
+    });
+
+    return selectButton;
+}
+
+function createSelect(className){
+    select = selection[0].getElementsByClassName("selects")[0].getElementsByClassName(className);
+    console.log(select);
+
+    var mainSelectWrapper;
+    mainSelectWrapper = document.createElement("div");
+    mainSelectWrapper.setAttribute("class", "main-select-wrapper");
+
+    mainSelectWrapper.appendChild(createSelectButton());
+    mainSelectWrapper.appendChild(createOptionsWrapper());
+
+    selection[0].appendChild(mainSelectWrapper);
+
+}
+
+function Select(className){
+    createSelect(className);
 }
 
 
+new Select("s");
+new Select("s1");
+new Select("s2");
