@@ -6,7 +6,7 @@ var optionsWrapper,
 
 function Select(className){
 
-    this.select = selection[0].children[0].getElementsByClassName("s1");
+    this.select = selection[0].children[0].getElementsByClassName(className);
     function createSelect(select){
         var mainSelectWrapper;
         mainSelectWrapper = document.createElement("div");
@@ -75,9 +75,7 @@ function Select(className){
             }
     
             for(var i = 0; i < dOptionWrapper.length; i++){
-                if(!dOptionWrapper[i].classList.contains("hide")){
-                    dOptionWrapper[i].classList.add("hide");
-                }
+                dOptionWrapper[i].classList.toggle("hide");
             }
     
         });
