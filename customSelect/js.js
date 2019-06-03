@@ -1,5 +1,8 @@
-var selection = document.getElementsByClassName("selection")[0];
-console.log(selection);
+
+var selection = document.createElement("div");;
+selection.setAttribute("class", "selection");
+document.body.appendChild(selection);
+
 var optionsWrapper,
     optionsItem,
     selectButton;
@@ -7,6 +10,7 @@ var optionsWrapper,
 function Select(select){
 
     this.select = select;
+
 
     function createSelect(select){
         var mainSelectWrapper;
