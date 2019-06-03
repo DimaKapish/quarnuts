@@ -10,7 +10,7 @@
     display: flex;
 }
 
-.selection select{
+select{
     display: none;
 }
 
