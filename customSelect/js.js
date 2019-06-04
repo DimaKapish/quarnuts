@@ -1,11 +1,7 @@
 
-var selection = document.createElement("div");;
+var selection = document.createElement("div");
 selection.setAttribute("class", "selection");
 document.body.appendChild(selection);
-
-var optionsWrapper,
-    optionsItem,
-    selectButton;
 
 function Select(select){
 
@@ -25,6 +21,7 @@ function Select(select){
     }
 
     function createSelectButton (select){
+        var selectButton;
         selectButton = document.createElement("div");
         selectButton.setAttribute("class", "select-button");
         selectButton.innerHTML = select.options[select.selectedIndex].innerHTML;
@@ -38,6 +35,7 @@ function Select(select){
     }
 
     function createOptionsWrapper(select){
+        var optionsWrapper, optionsItem;
         console.log(select);
         optionsWrapper = document.createElement("div");
         optionsWrapper.setAttribute("class", "options-wrapper hide");
@@ -72,12 +70,12 @@ function Select(select){
         return optionsWrapper;
     }
     
-    function closeSelect(select) {
+    function closeSelect() {
         document.addEventListener("click", function(){
             var dOptionWrapper = [];
 
-            var mainSelectWrapperCount = selection.getElementsByClassName("main-select-wrapper").length;
             var mainSelectWrapperElement = selection.getElementsByClassName("main-select-wrapper");
+            var mainSelectWrapperCount = mainSelectWrapperElement.length;
 
             for(var i = 0; i < mainSelectWrapperCount; i++){
                 dOptionWrapper.push(mainSelectWrapperElement[i].getElementsByClassName("options-wrapper")[0]);
@@ -95,8 +93,8 @@ function Select(select){
     createSelect(this.select);
 }
 
-var selectCount = document.getElementsByTagName("select").length;
 var selectElement = document.getElementsByTagName("select");
+var selectCount = selectElement.length;
 
 for (var i = 0; i < selectCount; i++) {
     new Select(selectElement[i]);
