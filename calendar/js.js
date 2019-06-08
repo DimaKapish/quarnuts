@@ -4,100 +4,101 @@ function Calendar( source ) {
     this.source = source;
     var $ = this;
 
-    this.date = new Date(2019, 7);
-    console.log(this.date.getDay());
+    this.date = new Date();
 
     this.elements = {
 
-        calendar: function (){
-            var calendar = document.createElement("div");
-            calendar.classList.add("calendar");
+        calendar: document.createElement("div"),
 
-            return calendar;
-        },
+        topLine: document.createElement("div"),
+        prevArrow: document.createElement("span"),
+        month: document.createElement("p"),
+        nextArrow: document.createElement("span"),
 
-        topLine: function () {
-            var topLine = document.createElement("div");
-            topLine.classList.add("topline");
-
-            var nextArrow = document.createElement("span");
-            var prevArrow = nextArrow.cloneNode(false);
-
-            nextArrow.classList.add("next");
-            prevArrow.classList.add("prev");
-
-            var month = document.createElement("p");
-            month.classList.add('month');
-
-            return {
-                top: topLine,
-                next: nextArrow,
-                prev: prevArrow,
-                month: month
-            };
-
-        },
-
-        table: function () {
-            var table = document.createElement("table");
-            table.classList.add("table");
-
-            var thead = document.createElement("thead");
-            thead.classList.add("thead");
-            var tbody = document.createElement("tbody");
-            tbody.classList.add("tbody");
-
-            return {
-                table: table,
-                thead: thead,
-                tbody: tbody
-            };
-        }
+        table: document.createElement("table"),
+        thead: document.createElement("thead"),
+        tbody: document.createElement("tbody")
 
     };
 
     function init() {
-        document.body.appendChild(drawCalendar());
+        events();
+        drawCalendar();
+    }
+    function events() {
+
+        $.source.addEventListener('click', function () {
+            $.elements.calendar.classList.toggle("hide");
+        });
+
+        $.elements.nextArrow.addEventListener('click', function(e) {
+            var calendar = getCalendarDate();
+            var newMonth = new Date(calendar.date).setMonth(calendar.month + 1);
+            updateDate(newMonth);
+            clearDays();
+            drawTopLine();
+            drawCalendarTable();
+        });
+
+        $.elements.prevArrow.addEventListener('click', function(e) {
+            var calendar = getCalendarDate();
+            var newMonth = new Date(calendar.date).setMonth(calendar.month - 1);
+            updateDate(newMonth);
+            clearDays();
+            drawTopLine();
+            drawCalendarTable();
+        });
+    }
+
+    function updateDate(date) {
+        $.date = new Date(date);
+    }
+
+
+    function clearDays() {
+        $.elements.tbody.innerHTML = "";
     }
 
     function drawCalendar() {
-        var top = drawTopLine();
-        var table = drawCalendarTable();
 
-        var calendar = $.elements.calendar();
-        calendar.appendChild(top);
-        calendar.appendChild(table);
+        $.elements.calendar.classList.add("calendar", "hide");
 
-        return calendar;
+        drawTopLine();
+        drawWeek();
+        drawCalendarTable();
+
+        document.body.appendChild($.elements.calendar);
+
+        return $.elements.calendar;
     }
 
     function drawTopLine() {
 
-        var top = $.elements.topLine().top;
-        var prevArrow = $.elements.topLine().prev;
-        var nextArrow = $.elements.topLine().next;
-        var month = $.elements.topLine().month;
-        month.innerHTML = getCalendarDate().month;
-        top.appendChild(prevArrow);
-        top.appendChild(month);
-        top.appendChild(nextArrow);
+        $.elements.topLine.classList.add("topline");
+        $.elements.prevArrow.classList.add("prev");
+        $.elements.nextArrow.classList.add("next");
 
-        return top;
+        $.elements.topLine.appendChild($.elements.prevArrow);
+        $.elements.topLine.appendChild(drawMonth(getCalendarDate().month));
+        $.elements.topLine.appendChild($.elements.nextArrow);
+
+        $.elements.calendar.appendChild($.elements.topLine);
+
     }
 
     function drawCalendarTable() {
 
-        var table = $.elements.table().table;
-        table.appendChild(drawWeek());
-        table.appendChild(drawDays());
+        $.elements.table.classList.add("table");
 
-        return table;
+        drawDays();
+
+        $.elements.calendar.appendChild($.elements.table);
     }
 
     function drawWeek() {
 
         var week = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС", ];
-        var thead = $.elements.table().thead;
+        $.elements.thead.classList.add("thead");
         var tr = document.createElement("tr"),
             td;
 
@@ -107,13 +108,19 @@ function Calendar( source ) {
             tr.appendChild(td);
         });
 
-        thead.appendChild(tr);
-        return thead;
+        $.elements.thead.appendChild(tr);
+        $.elements.table.appendChild($.elements.thead);
+    }
+
+    function drawMonth(number) {
+        var monthList = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" ];
+        $.elements.month.innerHTML = monthList[number];
+        return $.elements.month;
     }
 
     function drawDays() {
 
-        var tbody = $.elements.table().tbody;
+        $.elements.tbody.classList.add("tbody");
         var days = generateDays(getCalendarDate().contDays);
         var tr, td;
 
@@ -139,17 +146,18 @@ function Calendar( source ) {
                 }
                 tr.appendChild(td);
             }
-            tbody.appendChild(tr);
+            $.elements.tbody.appendChild(tr);
             countWeek++;
         }
 
-        return tbody;
+        $.elements.table.appendChild($.elements.tbody);
     }
 
     function getCalendarDate() {
         var date = new Date($.date);
 
         return {
+            date: date,
             day: date.getDate(),
             weekDay: date.getDay(),
             month: date.getMonth(),
