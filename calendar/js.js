@@ -13,6 +13,7 @@ function Calendar( source ) {
         topLine: document.createElement("div"),
         prevArrow: document.createElement("span"),
         month: document.createElement("p"),
+        year: document.createElement("p"),
         nextArrow: document.createElement("span"),
 
         table: document.createElement("table"),
@@ -48,6 +49,13 @@ function Calendar( source ) {
             drawTopLine();
             drawCalendarTable();
         });
+
+        $.elements.tbody.addEventListener('click', function (e) {
+            var value = Number(e.target.innerText);
+            var selectDate = new Date($.date);
+            selectDate.setDate(value);
+            $.source.valueAsDate = selectDate;
+        });
     }
 
     function updateDate(date) {
@@ -80,6 +88,7 @@ function Calendar( source ) {
 
         $.elements.topLine.appendChild($.elements.prevArrow);
         $.elements.topLine.appendChild(drawMonth(getCalendarDate().month));
+        $.elements.topLine.appendChild(drawYear());
         $.elements.topLine.appendChild($.elements.nextArrow);
 
         $.elements.calendar.appendChild($.elements.topLine);
@@ -118,6 +127,10 @@ function Calendar( source ) {
         return $.elements.month;
     }
 
+    function drawYear() {
+        $.elements.year.innerHTML = getCalendarDate().year;
+        return $.elements.year;
+    }
     function drawDays() {
 
         $.elements.tbody.classList.add("tbody");
