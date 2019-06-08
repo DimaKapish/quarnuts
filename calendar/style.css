@@ -1,0 +1,52 @@
+.input-calendar::-webkit-calendar-picker-indicator, ::-webkit-clear-button, ::-webkit-inner-spin-button{
+    display: none;
+}
+
+.input-calendar{
+    position: relative;
+    padding: 5px 20px;
+}
+
+*{
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    padding: 0;
+    margin: 0;
+}
+
+.calendar.hide{
+    display: none;
+}
+
+.calendar{
+    background-color: #f5f6fa;
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    padding: 10px 20px;
+}
+
+.topline{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    padding: 10px 0 15px 0;
+    border-bottom: 1px solid #dcdde1;
+}
+.prev:before{
+    content: '<';
+}
+.next:before{
+    content: '>';
+}
+
+.table{
+    padding-top: 10px;
+    text-align: center;
+}
+.table td{
+    padding: 7px;
+}
+
