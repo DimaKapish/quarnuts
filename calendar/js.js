@@ -64,7 +64,7 @@ function Calendar( source ) {
 
 
     function clearDays() {
-        $.elements.tbody.innerHTML = "";
+        $.elements.tbody.textContent = "";
     }
 
     function drawCalendar() {
@@ -113,7 +113,7 @@ function Calendar( source ) {
 
         week.forEach(function (day) {
             td = document.createElement("td");
-            td.innerHTML = day;
+            td.textContent = day;
             tr.appendChild(td);
         });
 
@@ -123,23 +123,23 @@ function Calendar( source ) {
 
     function drawMonth(number) {
         var monthList = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" ];
-        $.elements.month.innerHTML = monthList[number];
+        $.elements.month.textContent = monthList[number];
         return $.elements.month;
     }
 
     function drawYear() {
-        $.elements.year.innerHTML = getCalendarDate().year;
+        $.elements.year.textContent = getCalendarDate().year;
         return $.elements.year;
     }
     function drawDays() {
 
         $.elements.tbody.classList.add("tbody");
-        var days = generateDays(getCalendarDate().contDays);
+        var days = generateDays(getCalendarDate().countDays);
         var tr, td;
 
         var weekDay = (getCalendarDate().weekDay == 0) ? 7 : getCalendarDate().weekDay;
 
-        var countDays = getCalendarDate().contDays;
+        var countDays = getCalendarDate().countDays;
 
         var i = 0;
         var countWeek = 0;
@@ -148,12 +148,12 @@ function Calendar( source ) {
             for (var j = 1; j <= 7; j++) {
                 td = document.createElement("td");
                 if(countWeek == 0 && j < weekDay ){
-                    td.innerHTML = '';
+                    td.textContent = '';
                 }else{
                     if(days[i] == undefined){
                         break;
                     }else{
-                        td.innerHTML = days[i];
+                        td.textContent = days[i];
                         i++;
                     }
                 }
@@ -175,7 +175,7 @@ function Calendar( source ) {
             weekDay: date.getDay(),
             month: date.getMonth(),
             year: date.getFullYear(),
-            contDays: countDaysMonth(date),
+            countDays: countDaysMonth(date),
             firstDay: getFirstDay(date),
         }
 
