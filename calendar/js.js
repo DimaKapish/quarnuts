@@ -1,3 +1,7 @@
+var dictionary = {
+    week: ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС" ],
+    month: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" ]
+};
 
 function Calendar( source ) {
 
@@ -8,110 +12,150 @@ function Calendar( source ) {
 
     this.elements = {
 
-        calendar: document.createElement("div"),
-
-        topLine: document.createElement("div"),
-        prevArrow: document.createElement("span"),
         month: document.createElement("p"),
         year: document.createElement("p"),
-        nextArrow: document.createElement("span"),
 
-        table: document.createElement("table"),
-        thead: document.createElement("thead"),
-        tbody: document.createElement("tbody")
+        wrapper: (function () {
+            var wrapper = document.createElement('div');
+            wrapper.classList.add('calendar-wrapper');
+            return wrapper;
+        }) (),
+
+        input: (function () {
+            var input = document.createElement('input');
+            input.setAttribute('type', 'text');
+            input.setAttribute('readonly', null);
+            input.setAttribute('placeholder', 'дд.мм.гггг');
+            input.classList.add('input');
+            return input;
+        }) (),
+
+        calendar: (function () {
+            var calendar =  document.createElement("div");
+            calendar.classList.add('calendar', 'hide');
+            return calendar;
+        }) (),
+
+        topLine: (function () {
+            var topLine = document.createElement("div");
+            topLine.classList.add('topline');
+            return topLine;
+        }) (),
+
+        prevArrow: (function () {
+            var prev = document.createElement("span");
+            prev.classList.add('prev');
+            return prev;
+        }) (),
+
+        nextArrow: (function() {
+            var next = document.createElement("span");
+            next.classList.add('next');
+            return next;
+        }) (),
+
+        table: (function () {
+            var table = document.createElement("table");
+            table.classList.add('table');
+            return table;
+        }) (),
+
+        thead: (function() {
+            var thead = document.createElement("thead");
+            thead.classList.add('thead');
+            return thead;
+        }) (),
+
+        tbody: (function () {
+            var tbody = document.createElement("tbody");
+            tbody.classList.add('tbody');
+            return tbody;
+        }) ()
 
     };
 
-    function init() {
-        events();
-        drawCalendar();
-    }
-    function events() {
+    this.events = function () {
 
-        $.source.addEventListener('click', function () {
+        $.elements.input.addEventListener('click', function () {
             $.elements.calendar.classList.toggle("hide");
         });
 
         $.elements.nextArrow.addEventListener('click', function(e) {
-            var calendar = getCalendarDate();
+            var calendar = $.getCalendar();
             var newMonth = new Date(calendar.date).setMonth(calendar.month + 1);
-            updateDate(newMonth);
-            clearDays();
-            drawTopLine();
-            drawCalendarTable();
+            $.updateDate(newMonth);
+            $.clearDays();
+            $.drawTop();
+            $.drawTable();
         });
 
         $.elements.prevArrow.addEventListener('click', function(e) {
-            var calendar = getCalendarDate();
+            var calendar = $.getCalendar();
             var newMonth = new Date(calendar.date).setMonth(calendar.month - 1);
-            updateDate(newMonth);
-            clearDays();
-            drawTopLine();
-            drawCalendarTable();
+            $.updateDate(newMonth);
+            $.clearDays();
+            $.drawTop();
+            $.drawTable();
         });
 
         $.elements.tbody.addEventListener('click', function (e) {
             var value = Number(e.target.innerText);
-            var selectDate = new Date($.date);
-            selectDate.setDate(value);
-            $.source.valueAsDate = selectDate;
+            var selectDate = value + '.' + ($.getCalendar().month + 1) + '.' + $.getCalendar().year;
+            $.elements.input.value = selectDate;
         });
-    }
+    };
 
-    function updateDate(date) {
+    this.updateDate = function (date) {
         $.date = new Date(date);
-    }
+    };
 
 
-    function clearDays() {
+    this.clearDays = function () {
         $.elements.tbody.textContent = "";
-    }
+    };
 
-    function drawCalendar() {
+    this.drawWrapper = function () {
 
-        $.elements.calendar.classList.add("calendar", "hide");
+        $.elements.wrapper.appendChild($.elements.input);
+        $.elements.wrapper.appendChild($.drawCalendar());
+        document.body.appendChild($.elements.wrapper);
 
-        drawTopLine();
-        drawWeek();
-        drawCalendarTable();
+    };
 
-        document.body.appendChild($.elements.calendar);
+    this.drawCalendar = function () {
+
+        $.drawTop();
+        $.drawWeek();
+        $.drawTable();
 
         return $.elements.calendar;
-    }
+    };
 
-    function drawTopLine() {
+    this.drawTop = function () {
 
-        $.elements.topLine.classList.add("topline");
-        $.elements.prevArrow.classList.add("prev");
-        $.elements.nextArrow.classList.add("next");
 
         $.elements.topLine.appendChild($.elements.prevArrow);
-        $.elements.topLine.appendChild(drawMonth(getCalendarDate().month));
-        $.elements.topLine.appendChild(drawYear());
+        $.elements.topLine.appendChild($.drawMonth($.getCalendar().month));
+        $.elements.topLine.appendChild($.drawYear());
         $.elements.topLine.appendChild($.elements.nextArrow);
 
         $.elements.calendar.appendChild($.elements.topLine);
 
-    }
+    };
 
-    function drawCalendarTable() {
+    this.drawTable = function () {
 
-        $.elements.table.classList.add("table");
 
-        drawDays();
+        $.drawDays();
 
         $.elements.calendar.appendChild($.elements.table);
-    }
+    };
 
-    function drawWeek() {
-
-        var week = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС", ];
-        $.elements.thead.classList.add("thead");
+    this.drawWeek = function () {
         var tr = document.createElement("tr"),
             td;
 
-        week.forEach(function (day) {
+        dictionary.week.forEach(function (day) {
             td = document.createElement("td");
             td.textContent = day;
             tr.appendChild(td);
@@ -119,34 +163,30 @@ function Calendar( source ) {
 
         $.elements.thead.appendChild(tr);
         $.elements.table.appendChild($.elements.thead);
-    }
+    };
 
-    function drawMonth(number) {
-        var monthList = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" ];
+    this.drawMonth = function (number) {
+        var monthList = dictionary.month;
         $.elements.month.textContent = monthList[number];
         return $.elements.month;
-    }
+    };
 
-    function drawYear() {
-        $.elements.year.textContent = getCalendarDate().year;
+    this.drawYear = function () {
+        $.elements.year.textContent = $.getCalendar().year;
         return $.elements.year;
-    }
-    function drawDays() {
+    };
+    this.drawDays = function () {
 
-        $.elements.tbody.classList.add("tbody");
-        var days = generateDays(getCalendarDate().countDays);
-        var tr, td;
+        var days = $.generateDays($.getCalendar().countDays);
 
-        var weekDay = (getCalendarDate().weekDay == 0) ? 7 : getCalendarDate().weekDay;
-
-        var countDays = getCalendarDate().countDays;
-
+        var weekDay = ($.getCalendar().weekDay == 0) ? 7 : $.getCalendar().weekDay;
+        var countDays = $.getCalendar().countDays;
         var i = 0;
         var countWeek = 0;
-        while (days[i] <= countDays){
-            tr = document.createElement("tr");
+        while (days[i] <= countDays) {
+            let tr = document.createElement("tr");
             for (var j = 1; j <= 7; j++) {
-                td = document.createElement("td");
+                let td = document.createElement("td");
                 if(countWeek == 0 && j < weekDay ){
                     td.textContent = '';
                 }else{
@@ -162,41 +202,48 @@ function Calendar( source ) {
             $.elements.tbody.appendChild(tr);
             countWeek++;
         }
-
         $.elements.table.appendChild($.elements.tbody);
-    }
+    };
 
-    function getCalendarDate() {
+    this.getCalendar = function () {
         var date = new Date($.date);
 
         return {
             date: date,
             day: date.getDate(),
-            weekDay: date.getDay(),
+            weekDay: $.getWeek(date),
             month: date.getMonth(),
             year: date.getFullYear(),
-            countDays: countDaysMonth(date),
-            firstDay: getFirstDay(date),
+            countDays: $.countDays(date),
+            firstDay: $.getFirstDay(date),
         }
 
-    }
+    };
 
-    function getFirstDay(date) {
+    this.getWeek = function (date) {
+        let d = $.getDate(date);
+        let day = new Date(d.year, d.month, 1).getDay();
+        return day;
+    };
 
-        var d = countMonthYear(date);
+
+
+    this.getFirstDay = function (date) {
+
+        var d = $.getDate(date);
         return  new Date(d.year, d.month, 1).getDate();
 
-    }
+    };
 
-    function countDaysMonth(date) {
-        var d = countMonthYear(date);
+    this.countDays = function (date) {
+        var d = $.getDate(date);
 
         var countDays = new Date(d.year, d.month + 1, 0).getDate();
 
         return countDays;
-    }
+    };
 
-    function countMonthYear(date) {
+    this.getDate = function (date) {
 
         var d = new Date(date);
 
@@ -204,30 +251,29 @@ function Calendar( source ) {
             year: d.getFullYear(),
             month: d.getMonth()
         };
-    }
+    };
 
-    function generateDays(number) {
+    this.generateDays = function (number) {
 
-        var days = new Array(number);
+        var days = [];
 
-        for (var i = 0; i < days.length; i++) {
-            days[i] = number;
-            number--;
-        }
+        for ( let i = 1; i <= number; i++ )
+            days[ i - 1 ] = i;
 
-        days.reverse();
 
         return days;
 
-    }
+    };
 
-    init();
+    $.events();
+    $.drawWrapper();
 
 }
 
 
-var calendar = document.getElementsByTagName("input");
+var calendar = document.querySelectorAll("input[type='date']");
 
 for (var i = 0; i < calendar.length; i++) {
     new Calendar(calendar[i]);
 }
+
